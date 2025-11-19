@@ -1,0 +1,41 @@
+# ML Model Training Dependencies
+# Plant Health Diagnosis Tool - Machine Learning Module
+
+# Deep Learning Framework
+tensorflow>=2.12.0
+keras>=2.12.0
+
+# Data Processing & NumPy Stack
+numpy>=1.24.0
+pandas>=1.5.0
+scipy>=1.9.0
+
+# Image Processing
+pillow>=9.5.0
+opencv-python>=4.7.0
+scikit-image>=0.20.0
+
+# Machine Learning & Evaluation
+scikit-learn>=1.2.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+tqdm>=4.65.0
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Optional: GPU Support
+# Uncomment if using GPU training
+# tensorflow-gpu>=2.12.0
+# cuda-toolkit>=11.8
+# cudnn>=8.6
+
+# Optional: Model Serving
+# tensorflow-serving-api>=2.12.0
+# onnx>=1.14.0
+
+# Development & Testing (optional)
+# pytest>=7.3.0
+# black>=23.3.0
+# pylint>=2.17.0
