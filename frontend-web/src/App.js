@@ -14,6 +14,15 @@ import ResultsPage from './pages/ResultsPage';
  * - Results visualization with confidence scores
  * - Geo-aware solutions and recommendations
  */
+<header style={{
+  display: 'flex', alignItems: 'center', background: '#357266', color: 'white',
+  padding: '14px 32px', fontSize: 20, fontWeight: 600,
+  letterSpacing: 1, boxShadow: '0 2px 8px #eee'
+}}>
+  <img src="/logo.png" alt="Logo" style={{ height: 40, marginRight: 16, borderRadius: 8 }} />
+  Plant Health Diagnosis Tool
+</header>
+
 function App() {
   const [currentPage, setCurrentPage] = useState('diagnosis');
   const [diagnosisResult, setDiagnosisResult] = useState(null);
