@@ -1,7 +1,8 @@
 import os
 import requests
 
-IMG_URL = "https://images.unsplash.com/photo-1518977956810-8fbc8d6d7337?auto=format&fit=crop&w=400&q=80" # Example wheat image
+# URL for a generic plant image (JPEG, always accessible)
+IMG_URL = "https://images.unsplash.com/photo-1518977956810-8fbc8d6d7337?auto=format&fit=crop&w=400&q=80"
 
 classes = [
     "Tomato_Blight",
@@ -32,7 +33,9 @@ for class_name in classes:
             with open(save_path, 'wb') as f:
                 f.write(r.content)
             print(f"Downloaded: {save_path}")
+        else:
+            print(f"Failed ({r.status_code}): {IMG_URL}")
     except Exception as e:
         print(f"Error downloading for {class_name}: {e}")
 
-print("\nThis will give you 1 image per class (same image for test purposes). Now run your training script.")
+print("\nEach folder now has at least one valid JPEG file. You can now run your training script.")
