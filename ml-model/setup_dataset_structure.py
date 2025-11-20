@@ -1,6 +1,8 @@
 import os
+import requests
 
-# List your global classes here (customize as needed!)
+IMG_URL = "https://images.unsplash.com/photo-1518977956810-8fbc8d6d7337?auto=format&fit=crop&w=400&q=80" # Example wheat image
+
 classes = [
     "Tomato_Blight",
     "Tomato_Healthy",
@@ -17,12 +19,20 @@ classes = [
     "General_Unknown"
 ]
 
-dataset_dir = "dataset"
-os.makedirs(dataset_dir, exist_ok=True)
+DATASET_DIR = "dataset"
+os.makedirs(DATASET_DIR, exist_ok=True)
 
 for class_name in classes:
-    class_path = os.path.join(dataset_dir, class_name)
-    os.makedirs(class_path, exist_ok=True)
-    print(f"Created folder: {class_path}")
+    class_dir = os.path.join(DATASET_DIR, class_name)
+    os.makedirs(class_dir, exist_ok=True)
+    save_path = os.path.join(class_dir, "sample.jpg")
+    try:
+        r = requests.get(IMG_URL, timeout=10)
+        if r.status_code == 200:
+            with open(save_path, 'wb') as f:
+                f.write(r.content)
+            print(f"Downloaded: {save_path}")
+    except Exception as e:
+        print(f"Error downloading for {class_name}: {e}")
 
-print("\nPlace your labeled images (jpg/png) in each folder and rerun the training script!")
+print("\nThis will give you 1 image per class (same image for test purposes). Now run your training script.")
