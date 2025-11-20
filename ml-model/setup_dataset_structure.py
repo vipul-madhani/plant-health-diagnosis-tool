@@ -1,9 +1,6 @@
 import os
 import requests
 
-# URL for a generic plant image (JPEG, always accessible)
-IMG_URL = "https://images.unsplash.com/photo-1518977956810-8fbc8d6d7337?auto=format&fit=crop&w=400&q=80"
-
 classes = [
     "Tomato_Blight",
     "Tomato_Healthy",
@@ -20,22 +17,30 @@ classes = [
     "General_Unknown"
 ]
 
+sample_img_urls = [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Tomato_blite.JPG/640px-Tomato_blite.JPG",
+    "https://upload.wikimedia.org/wikipedia/commons/4/45/Potato_blight.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/a/a2/Wheat-field.jpg"
+]
+
 DATASET_DIR = "dataset"
 os.makedirs(DATASET_DIR, exist_ok=True)
 
-for class_name in classes:
+for i, class_name in enumerate(classes):
     class_dir = os.path.join(DATASET_DIR, class_name)
     os.makedirs(class_dir, exist_ok=True)
+    # Cycle through sample images so each class is guaranteed a file
+    img_url = sample_img_urls[i % len(sample_img_urls)]
     save_path = os.path.join(class_dir, "sample.jpg")
     try:
-        r = requests.get(IMG_URL, timeout=10)
+        r = requests.get(img_url, timeout=10)
         if r.status_code == 200:
             with open(save_path, 'wb') as f:
                 f.write(r.content)
-            print(f"Downloaded: {save_path}")
+            print(f"Downloaded for {class_name}: {save_path}")
         else:
-            print(f"Failed ({r.status_code}): {IMG_URL}")
+            print(f"Failed ({r.status_code}): {img_url}")
     except Exception as e:
         print(f"Error downloading for {class_name}: {e}")
 
-print("\nEach folder now has at least one valid JPEG file. You can now run your training script.")
+print("\nEach class folder now has a valid JPEG. Try your training script again.")
