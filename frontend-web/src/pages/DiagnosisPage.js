@@ -7,34 +7,42 @@ const DiagnosisPage = ({ onDiagnosisComplete }) => {
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [result, setResult] = useState(null);
+
 
   const handleImageSelect = (file, preview) => {
+    console.log("File received from ImageUpload:", file);
     setSelectedFile(file);
     setImagePreview(preview);
     setError('');
   };
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!selectedFile) {
-      setError('Please select an image first');
-      return;
-    }
-
+    if (!selectedFile) return;
     setLoading(true);
     setError('');
-
+    setResult(null);
+  
     try {
-      // pass the selected File directly, no FormData
-      const response = await diagnosePlant(selectedFile);
-      onDiagnosisComplete(response);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const response = await fetch('http://localhost:8000/predict', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      setResult(data);  // <-- store for display
     } catch (err) {
-      setError(err.message || 'Failed to analyze plant. Please try again.');
+      setError('Failed to analyze plant. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="diagnosis-page">
@@ -66,6 +74,13 @@ const DiagnosisPage = ({ onDiagnosisComplete }) => {
             {loading ? 'Analyzing Plant...' : 'Analyze Plant Health'}
           </button>
         </form>
+        {result && (
+          <div className="result-section">
+            <h3>Diagnosis Result:</h3>
+            <p><strong>Class Index:</strong> {result.class_index}</p>
+            <p><strong>Confidence:</strong> {(result.confidence * 100).toFixed(2)}%</p>
+          </div>
+        )}
 
         <div className="info-section">
           <h3>How it works:</h3>

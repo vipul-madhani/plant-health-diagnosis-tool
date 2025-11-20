@@ -32,8 +32,12 @@ export const diagnosePlant = async (file) => {
   });
 
   if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.message || `HTTP error! status: ${response.status}`);
+    let msg = `HTTP error! status: ${response.status}`;
+    try {
+      const errJson = await response.json();
+      if (errJson.detail) msg = JSON.stringify(errJson.detail);
+    } catch {}
+    throw new Error(msg);
   }
 
   return await response.json();

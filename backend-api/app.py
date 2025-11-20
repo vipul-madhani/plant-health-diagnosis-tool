@@ -91,7 +91,7 @@ def get_config():
     }), 200
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 8000))
     debug = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
     app.logger.info(f'Starting Flask app on port {port}')
     app.run(host='0.0.0.0', port=port, debug=debug)

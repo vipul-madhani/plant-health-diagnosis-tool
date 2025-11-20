@@ -14,7 +14,7 @@ class Config:
     TESTING = False
     
     # API
-    API_PORT = int(os.getenv('API_PORT', 5000))
+    API_PORT = int(os.getenv('API_PORT', 8000))
     API_HOST = os.getenv('API_HOST', '127.0.0.1')
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
     

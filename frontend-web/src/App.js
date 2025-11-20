@@ -34,47 +34,20 @@ function App() {
    * Handle diagnosis submission
    * @param {File} image - Image file from upload
    */
-  const handleDiagnosis = async (image) => {
-    setLoading(true);
-    setError(null);
-    setUploadedImage(image);
-
-    try {
-      // Create FormData for multipart upload
-      const formData = new FormData();
-      formData.append('image', image);
-
-      // Call backend API
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiUrl}/api/diagnose`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      // Set results and navigate to results page
-      setDiagnosisResult({
-        disease: data.disease_diagnosis,
-        species: data.species_identification,
-        confidence_disease: data.disease_confidence,
-        confidence_species: data.species_confidence,
-        treatments: data.treatments || [],
-        preventive_measures: data.preventive_measures || [],
-        geo_solutions: data.geo_aware_solutions || [],
-        timestamp: new Date().toISOString(),
-      });
-
-      setCurrentPage('results');
-    } catch (err) {
-      console.error('Diagnosis error:', err);
-      setError(`Failed to diagnose: ${err.message}`);
-      setLoading(false);
-    }
+  const handleDiagnosisComplete = (response) => {
+    // response is whatever diagnosePlant() returns: { class_index, confidence, ... }
+    setDiagnosisResult({
+      // adapt to your backend response
+      disease: response.disease_diagnosis || null,
+      species: response.species_identification || null,
+      confidence_disease: response.disease_confidence || null,
+      confidence_species: response.species_confidence || null,
+      treatments: response.treatments || [],
+      preventive_measures: response.preventive_measures || [],
+      geo_solutions: response.geo_aware_solutions || [],
+      timestamp: new Date().toISOString(),
+    });
+    setCurrentPage('results');
   };
 
   /**
@@ -138,9 +111,9 @@ function App() {
 
         {currentPage === 'diagnosis' && (
           <DiagnosisPage
-            onDiagnosis={handleDiagnosis}
-            loading={loading}
-            error={error}
+          onDiagnosisComplete={handleDiagnosisComplete} // <--- rename prop here!
+          loading={loading}
+          error={error}
           />
         )}
 
