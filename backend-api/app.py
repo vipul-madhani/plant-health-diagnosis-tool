@@ -10,9 +10,12 @@ import os
 from dotenv import load_dotenv
 import logging
 from logging.handlers import RotatingFileHandler
+from fastapi import FastAPI
+from blog_routes import router as blog_router
 
 load_dotenv()
-
+app = FastAPI()
+app.include_router(blog_router)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
