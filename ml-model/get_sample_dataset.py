@@ -1,42 +1,38 @@
 import os
 import requests
 
-sample_images = {
-    "Tomato_Healthy": [
-        "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80"
-    ],
-    "Tomato_Blight": [
-        "https://plantvillage.psu.edu/image/show/485"
-    ],
-    "Wheat_Healthy": [
-        "https://images.unsplash.com/photo-1518977956810-8fbc8d6d7337?auto=format&fit=crop&w=400&q=80"
-    ],
-    "Wheat_Rust": [
-        "https://www.cabi.org/isc/Images/isc/RPU/RPU5015.jpg"
-    ]
-    # add more URLs for other classes if needed, using direct JPEG/PNG links!
-}
+IMG_URL = "https://images.unsplash.com/photo-1518977956810-8fbc8d6d7337?auto=format&fit=crop&w=400&q=80" # Example wheat image
+
+classes = [
+    "Tomato_Blight",
+    "Tomato_Healthy",
+    "Potato_LateBlight",
+    "Potato_Healthy",
+    "Rice_BacterialLeafBlight",
+    "Rice_Healthy",
+    "Wheat_Rust",
+    "Wheat_Healthy",
+    "Maize_LeafSpot",
+    "Maize_Healthy",
+    "Leaf_Healthy",
+    "Leaf_Disease",
+    "General_Unknown"
+]
 
 DATASET_DIR = "dataset"
 os.makedirs(DATASET_DIR, exist_ok=True)
 
-def download_image(url, save_path):
+for class_name in classes:
+    class_dir = os.path.join(DATASET_DIR, class_name)
+    os.makedirs(class_dir, exist_ok=True)
+    save_path = os.path.join(class_dir, "sample.jpg")
     try:
-        r = requests.get(url, timeout=10)
+        r = requests.get(IMG_URL, timeout=10)
         if r.status_code == 200:
             with open(save_path, 'wb') as f:
                 f.write(r.content)
             print(f"Downloaded: {save_path}")
-        else:
-            print(f"Failed ({r.status_code}): {url}")
     except Exception as e:
-        print(f"Error ({url}): {e}")
+        print(f"Error downloading for {class_name}: {e}")
 
-for class_name, urls in sample_images.items():
-    class_dir = os.path.join(DATASET_DIR, class_name)
-    os.makedirs(class_dir, exist_ok=True)
-    for i, url in enumerate(urls):
-        save_path = os.path.join(class_dir, f"sample_{i+1}.jpg")
-        download_image(url, save_path)
-
-print("\nFinished downloading samples! Now run your training script.")
+print("\nThis will give you 1 image per class (same image for test purposes). Now run your training script.")
