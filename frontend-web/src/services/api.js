@@ -1,6 +1,6 @@
 // API Service Module for Plant Health Diagnosis Tool
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 /**
  * Handle API errors with consistent error messages
@@ -19,31 +19,27 @@ const handleError = (error) => {
 
 /**
  * Diagnose plant from image
- * @param {FormData} formData - Form data containing the plant image
+ * @param {File} file - Image file (File object from input)
  * @returns {Promise<Object>} - Diagnosis results
  */
-export const diagnosePlant = async (formData) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/diagnose`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        // Don't set Content-Type for FormData - browser will set it automatically
-      },
-    });
+export const diagnosePlant = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || `HTTP error! status: ${response.status}`);
-    }
+  const response = await fetch(`${API_BASE_URL}/predict`, {
+    method: 'POST',
+    body: formData,  // pass raw FormData
+  });
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Diagnosis API error:', error);
-    throw error;
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.message || `HTTP error! status: ${response.status}`);
   }
+
+  return await response.json();
 };
+
+
 
 /**
  * Get plant species information
@@ -185,6 +181,10 @@ export const getUserLocation = () => {
     );
   });
 };
+export function loginUser() { return Promise.resolve({}); }
+export function registerUser() { return Promise.resolve({}); }
+export function logoutUser() { return Promise.resolve({}); }
+export function refreshAccessToken() { return Promise.resolve({}); }
 
 export default {
   diagnosePlant,

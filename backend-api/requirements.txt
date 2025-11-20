@@ -1,4 +1,4 @@
 # Install production dependencies
 Flask-Talisman==1.0.0
-python-clamd==1.0.2
+# python-clamd==1.0.2
 # Other security/email/testing/dev dependencies are already listed

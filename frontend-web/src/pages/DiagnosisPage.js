@@ -26,16 +26,11 @@ const DiagnosisPage = ({ onDiagnosisComplete }) => {
     setError('');
 
     try {
-      const formData = new FormData();
-      formData.append('image', selectedFile);
-
-      const response = await diagnosePlant(formData);
-
-      // Navigate to results page with diagnosis data
+      // pass the selected File directly, no FormData
+      const response = await diagnosePlant(selectedFile);
       onDiagnosisComplete(response);
     } catch (err) {
       setError(err.message || 'Failed to analyze plant. Please try again.');
-      console.error('Diagnosis error:', err);
     } finally {
       setLoading(false);
     }
