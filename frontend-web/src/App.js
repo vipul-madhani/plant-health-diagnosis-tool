@@ -20,7 +20,7 @@ import ResultsPage from './pages/ResultsPage';
   letterSpacing: 1, boxShadow: '0 2px 8px #eee'
 }}>
   <img src="/logo.png" alt="Logo" style={{ height: 40, marginRight: 16, borderRadius: 8 }} />
-  Plant Health Diagnosis Tool
+  AgriIQ
 </header>
 
 function App() {
