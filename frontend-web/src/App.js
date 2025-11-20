@@ -154,16 +154,8 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="app-footer">
-        <div className="footer-content">
-          <p>Plant Health Diagnosis Tool v1.0</p>
-          <p>Powered by TensorFlow ResNet50 | Geo-Aware Solutions</p>
-          <p className="footer-links">
-            <a href="#about">About</a> |
-            <a href="#help">Help</a> |
-            <a href="#contact">Contact</a>
-          </p>
-        </div>
+      <footer style={{ textAlign: 'center', padding: 20, background: '#dfefdf', color: '#234567', fontWeight: 500 }}>
+        Plant Health Diagnosis Tool ©2025 | Powered by [Your Brand]
       </footer>
 
       {/* Loading Overlay */}
