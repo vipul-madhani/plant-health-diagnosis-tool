@@ -109,3 +109,18 @@ h3 { color: var(--text-dark); margin: 1rem 0 0.5rem; font-size: 1.2rem; }
   h1 { font-size: 1.8rem; }
   .upload-zone { padding: 2rem; }
 }
+button:active, .nav-button:active {
+  background-color: #357266 !important;
+}
+header {
+  background: #357266;
+}
+/* Footer styles */
+footer {
+  background: #dfefdf;
+  color: #234567;
+  font-size: 1em;
+  padding: 24px 12px;
+  font-weight: 500;
+  border-top: 1px solid #e0e0e0;
+}
