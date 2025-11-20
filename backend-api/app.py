@@ -82,7 +82,7 @@ def diagnose_plant():
                 'image_quality_score': 0.92
             }
             
-            logger.info(f\"Diagnosis completed for {filename}\")
+            logger.info(f"Diagnosis completed for {filename}")
             
             # Clean up uploaded file
             os.remove(filepath)
