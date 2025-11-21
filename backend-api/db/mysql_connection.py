@@ -7,6 +7,8 @@ from mysql.connector import pooling, Error
 import os
 from dotenv import load_dotenv
 import logging
+import pymysql
+pymysql.install_as_MySQLdb()
 
 load_dotenv()
 logger = logging.getLogger(__name__)
