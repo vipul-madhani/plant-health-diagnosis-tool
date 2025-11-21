@@ -63,10 +63,15 @@ try:
 except Exception as e:
     app.logger.error(f'❌ Database connection error: {str(e)}')
 
-# Import blueprints after limiter is initialized
+# Import and register blueprints
 from auth_routes import auth_bp
+from stats_routes import stats_bp
+
 limiter.limit("5 per minute")(auth_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(stats_bp)
+
+app.logger.info('✅ Registered blueprints: auth, stats')
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
