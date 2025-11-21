@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -17,20 +19,20 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    
     try {
-      // Call login API endpoint
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/user/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      
-      if (!response.ok) throw new Error('Login failed');
-      
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Login failed');
+      }
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      navigate('/diagnosis');
+      // Optionally: store user info in state/context
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login error. Please try again.');
     } finally {
@@ -45,7 +47,6 @@ const LoginPage = () => {
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
         <h1 className="text-3xl font-bold text-green-700 mb-2 text-center">Plant Health</h1>
         <p className="text-gray-600 text-center mb-6">Diagnosis Tool</p>
-        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -59,7 +60,6 @@ const LoginPage = () => {
               placeholder="your@email.com"
             />
           </div>
-          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input
@@ -72,9 +72,7 @@ const LoginPage = () => {
               placeholder="••••••••"
             />
           </div>
-          
           {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
-          
           <button
             type="submit"
             disabled={loading}
@@ -83,7 +81,6 @@ const LoginPage = () => {
             Sign In
           </button>
         </form>
-        
         <p className="text-center text-gray-600 mt-6">
           Don't have an account? <Link to="/signup" className="text-green-600 hover:underline font-semibold">Sign up</Link>
         </p>

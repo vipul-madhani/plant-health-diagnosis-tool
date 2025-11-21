@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './styles/index.css';
+import Header from './components/Header';
+import StatsCounter from './components/StatsCounter';
 import DiagnosisPage from './pages/DiagnosisPage';
 import ResultsPage from './pages/ResultsPage';
 
@@ -13,15 +15,8 @@ import ResultsPage from './pages/ResultsPage';
  * - Plant species identification
  * - Results visualization with confidence scores
  * - Geo-aware solutions and recommendations
+ * - Analytics dashboard with stats counter
  */
-<header style={{
-  display: 'flex', alignItems: 'center', background: '#357266', color: 'white',
-  padding: '14px 32px', fontSize: 20, fontWeight: 600,
-  letterSpacing: 1, boxShadow: '0 2px 8px #eee'
-}}>
-  <img src="/logo.png" alt="Logo" style={{ height: 40, marginRight: 16, borderRadius: 8 }} />
-  AgriIQ
-</header>
 
 function App() {
   const [currentPage, setCurrentPage] = useState('diagnosis');
@@ -69,18 +64,8 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Header */}
-      <header className="app-header">
-        <div className="header-content">
-          <h1 className="app-title">
-            <span className="plant-icon">🌿</span>
-            Plant Health Diagnosis Tool
-          </h1>
-          <p className="app-subtitle">
-            AI-powered disease detection and plant care guidance
-          </p>
-        </div>
-      </header>
+      {/* New Header Component with Logo and Nav */}
+      <Header currentPage={currentPage} onNavigate={handleNavigate} />
 
       {/* Navigation */}
       <nav className="app-nav">
@@ -128,7 +113,7 @@ function App() {
 
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: 20, background: '#dfefdf', color: '#234567', fontWeight: 500 }}>
-        Plant Health Diagnosis Tool ©2025 | Powered by [Your Brand]
+        Plant Health Diagnosis Tool ©2025 | Powered by AgriIQ
       </footer>
 
       {/* Loading Overlay */}
