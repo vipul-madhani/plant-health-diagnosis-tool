@@ -185,3 +185,6 @@ def send_email_notification(recipient_email, subject, body, is_html=False):
     and send barebones ad-hoc emails
     """
     return email_service.send_email(recipient_email, subject, body, is_html)
+
+send_email = send_email_notification
+
