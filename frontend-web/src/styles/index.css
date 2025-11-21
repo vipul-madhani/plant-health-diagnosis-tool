@@ -1,10 +1,15 @@
 :root {
-  --primary-color: #2ecc71;
-  --secondary-color: #27ae60;
+  /* New Professional Color Scheme */
+  --primary-color: #2d6a4f;
+  --secondary-color: #52b788;
+  --accent-color: #95d5b2;
+  --earth-tone: #74c69d;
+  
+  /* Keep existing colors */
   --danger-color: #e74c3c;
-  --text-dark: #2c3e50;
-  --text-light: #95a5a6;
-  --bg-light: #ecf0f1;
+  --text-dark: #1b4332;
+  --text-light: #6b7280;
+  --bg-light: #f8faf9;
   --border-radius: 8px;
   --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -109,12 +114,15 @@ h3 { color: var(--text-dark); margin: 1rem 0 0.5rem; font-size: 1.2rem; }
   h1 { font-size: 1.8rem; }
   .upload-zone { padding: 2rem; }
 }
+
 button:active, .nav-button:active {
-  background-color: #357266 !important;
+  background-color: #2d6a4f !important;
 }
+
 header {
-  background: #357266;
+  background: #2d6a4f;
 }
+
 /* Footer styles */
 footer {
   background: #dfefdf;
