@@ -46,7 +46,7 @@ const upload = multer({
 
 // ========================================
 // GET /api/analysis/usage-limit
-// Check user's daily analysis limit
+// Check user's lifetime free analysis limit (3 total)
 // ========================================
 router.get('/usage-limit', authMiddleware, async (req, res) => {
   try {
@@ -57,8 +57,10 @@ router.get('/usage-limit', authMiddleware, async (req, res) => {
       success: true,
       canAnalyze: limitCheck.allowed,
       remaining: limitCheck.remaining,
-      dailyLimit: 3,
-      totalUsed: user.totalFreeAnalysisUsed,
+      used: user.freeAnalysisCount,
+      limit: user.freeAnalysisLimit,
+      message: limitCheck.message,
+      isLifetimeLimit: true, // Indicates this is NOT a daily reset
     });
   } catch (error) {
     console.error('Error checking usage limit:', error);
@@ -68,7 +70,7 @@ router.get('/usage-limit', authMiddleware, async (req, res) => {
 
 // ========================================
 // POST /api/analysis/basic
-// Free basic plant health analysis (3 per day limit)
+// Free basic plant health analysis (3 lifetime total - NO RESET)
 // ========================================
 router.post('/basic', authMiddleware, upload.single('image'), async (req, res) => {
   try {
@@ -76,7 +78,7 @@ router.post('/basic', authMiddleware, upload.single('image'), async (req, res) =
       return res.status(400).json({ error: 'Plant image is required' });
     }
 
-    // Check daily limit
+    // Check lifetime limit (3 total, no daily reset)
     const user = await User.findById(req.user.id);
     const limitCheck = user.canDoFreeAnalysis();
 
@@ -85,10 +87,23 @@ router.post('/basic', authMiddleware, upload.single('image'), async (req, res) =
       fs.unlinkSync(req.file.path);
       
       return res.status(403).json({
-        error: 'Daily free analysis limit reached',
-        message: 'You have used all 3 free analyses for today. Please upgrade to detailed report or consultation.',
+        error: 'Free analysis limit reached',
+        message: 'You have used all 3 free analyses. Upgrade to detailed report (₹99) or consult an agronomist (₹199) to continue.',
         remaining: 0,
-        dailyLimit: 3,
+        used: user.freeAnalysisCount,
+        limit: user.freeAnalysisLimit,
+        upgradeOptions: [
+          {
+            type: 'detailed_report',
+            price: 99,
+            description: 'Get comprehensive diagnosis with treatment plan',
+          },
+          {
+            type: 'consultation',
+            price: 199,
+            description: 'Chat with certified agronomist for personalized advice',
+          },
+        ],
       });
     }
 
@@ -111,7 +126,7 @@ router.post('/basic', authMiddleware, upload.single('image'), async (req, res) =
 
     await analysis.save();
 
-    // Increment user's analysis count
+    // Increment user's analysis count (lifetime, no reset)
     await user.incrementAnalysisCount();
 
     // Send basic analysis email
@@ -125,8 +140,12 @@ router.post('/basic', authMiddleware, upload.single('image'), async (req, res) =
         confidence: (analysis.confidence * 100).toFixed(1),
         analysisId: analysis._id,
         remaining: limitCheck.remaining - 1,
+        isLastFree: (limitCheck.remaining - 1) === 0,
       },
     });
+
+    const newRemaining = limitCheck.remaining - 1;
+    const isLastFree = newRemaining === 0;
 
     res.status(200).json({
       success: true,
@@ -138,9 +157,13 @@ router.post('/basic', authMiddleware, upload.single('image'), async (req, res) =
       imageUrl: analysis.imageUrl,
       createdAt: analysis.createdAt,
       usageInfo: {
-        remaining: limitCheck.remaining - 1,
-        dailyLimit: 3,
-        totalUsed: user.totalFreeAnalysisUsed + 1,
+        remaining: newRemaining,
+        used: user.freeAnalysisCount,
+        limit: user.freeAnalysisLimit,
+        isLastFree,
+        message: isLastFree 
+          ? 'This was your last free analysis. Future analyses require payment.' 
+          : `${newRemaining} free ${newRemaining === 1 ? 'analysis' : 'analyses'} remaining.`,
       },
     });
   } catch (error) {
