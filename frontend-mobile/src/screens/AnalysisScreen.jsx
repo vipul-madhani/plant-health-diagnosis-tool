@@ -12,6 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import api from '../api/api';
+import UsageLimitBanner from '../components/UsageLimitBanner';
 
 export default function AnalysisScreen() {
   const navigation = useNavigation();
@@ -21,10 +22,29 @@ export default function AnalysisScreen() {
   const [analyzing, setAnalyzing] = useState(true);
   const [basicResult, setBasicResult] = useState(null);
   const [error, setError] = useState(null);
+  const [usageLimit, setUsageLimit] = useState(null);
 
   useEffect(() => {
-    performBasicAnalysis();
+    checkUsageLimit();
   }, []);
+
+  const checkUsageLimit = async () => {
+    try {
+      const response = await api.get('/analysis/usage-limit');
+      setUsageLimit(response.data);
+      
+      // If limit reached, show upgrade prompt immediately
+      if (response.data.remaining === 0) {
+        showUpgradePrompt();
+      } else {
+        performBasicAnalysis();
+      }
+    } catch (err) {
+      console.error('Usage limit check error:', err);
+      // Continue with analysis even if check fails
+      performBasicAnalysis();
+    }
+  };
 
   const performBasicAnalysis = async () => {
     try {
@@ -47,56 +67,63 @@ export default function AnalysisScreen() {
       });
 
       setBasicResult(response.data);
+      
+      // Update usage limit after successful analysis
+      if (response.data.usageInfo) {
+        setUsageLimit(response.data.usageInfo);
+      }
     } catch (err) {
       console.error('Analysis error:', err);
-      setError('Failed to analyze image. Please try again.');
+      
+      // Check if error is due to limit reached
+      if (err.response?.status === 403) {
+        setError('Free analysis limit reached. Please upgrade to continue.');
+        showUpgradePrompt();
+      } else {
+        setError('Failed to analyze image. Please try again.');
+      }
     } finally {
       setAnalyzing(false);
     }
   };
 
-  const handleGetDetailedReport = () => {
+  const showUpgradePrompt = () => {
     Alert.alert(
-      'Get Detailed Report',
-      'Get comprehensive diagnosis with treatment plan for ₹99',
+      'Free Limit Reached',
+      'You have used all 3 free analyses. Upgrade to continue:',
       [
+        {
+          text: 'Detailed Report (₹99)',
+          onPress: handleGetDetailedReport,
+        },
+        {
+          text: 'Consult Agronomist (₹199)',
+          onPress: handleConnectAgronomist,
+        },
         {
           text: 'Cancel',
           style: 'cancel',
-        },
-        {
-          text: 'Pay ₹99',
-          onPress: () => navigation.navigate('Payment', {
-            amount: 99,
-            type: 'detailed_report',
-            analysisId: basicResult?._id,
-            imageUri,
-          }),
         },
       ]
     );
   };
 
+  const handleGetDetailedReport = () => {
+    navigation.navigate('Payment', {
+      amount: 99,
+      type: 'detailed_report',
+      analysisId: basicResult?._id,
+      imageUri,
+    });
+  };
+
   const handleConnectAgronomist = () => {
-    Alert.alert(
-      'Connect with Agronomist',
-      'Chat with a certified agronomist for personalized advice (₹199)',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Pay ₹199',
-          onPress: () => navigation.navigate('Payment', {
-            amount: 199,
-            type: 'consultation',
-            analysisId: basicResult?._id,
-            imageUri,
-          }),
-        },
-      ]
-    );
+    navigation.navigate('Payment', {
+      amount: 199,
+      type: 'consultation',
+      analysisId: basicResult?._id,
+      imageUri,
+    });
   };
 
   if (analyzing) {
@@ -109,23 +136,54 @@ export default function AnalysisScreen() {
     );
   }
 
-  if (error) {
+  if (error && !basicResult) {
     return (
       <View style={styles.errorContainer}>
         <Icon name="alert-circle" size={60} color="#F44336" />
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={performBasicAnalysis}
-        >
-          <Text style={styles.retryButtonText}>Retry</Text>
-        </TouchableOpacity>
+        
+        {error.includes('limit reached') ? (
+          <View style={styles.upgradeButtonsContainer}>
+            <TouchableOpacity
+              style={[styles.upgradeButton, styles.reportButton]}
+              onPress={handleGetDetailedReport}
+            >
+              <Icon name="file-document" size={24} color="#fff" />
+              <Text style={styles.upgradeButtonText}>Detailed Report (₹99)</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={[styles.upgradeButton, styles.consultButton]}
+              onPress={handleConnectAgronomist}
+            >
+              <Icon name="chat" size={24} color="#fff" />
+              <Text style={styles.upgradeButtonText}>Consult Agronomist (₹199)</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={performBasicAnalysis}
+          >
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container}>
+      {/* Usage Limit Banner */}
+      {usageLimit && (
+        <UsageLimitBanner
+          remaining={usageLimit.remaining}
+          total={usageLimit.limit}
+          used={usageLimit.used}
+          isLifetime={true}
+        />
+      )}
+
       {/* Image Preview */}
       <Image source={{ uri: imageUri }} style={styles.plantImage} />
 
@@ -193,7 +251,7 @@ export default function AnalysisScreen() {
           style={styles.upgradeCard}
           onPress={handleGetDetailedReport}
         >
-          <View style={styles.upgradeIconContainer}>
+          <View style={[styles.upgradeIconContainer, { backgroundColor: '#E3F2FD' }]}>
             <Icon name="file-document" size={32} color="#2196F3" />
           </View>
           <View style={styles.upgradeContent}>
@@ -202,7 +260,8 @@ export default function AnalysisScreen() {
               • Complete diagnosis report{' \n'}
               • Step-by-step treatment plan{' \n'}
               • Preventive measures{' \n'}
-              • Organic remedies
+              • Organic remedies{' \n'}
+              • Download PDF report
             </Text>
             <View style={styles.priceTag}>
               <Text style={styles.priceText}>₹99</Text>
@@ -216,7 +275,7 @@ export default function AnalysisScreen() {
           style={styles.upgradeCard}
           onPress={handleConnectAgronomist}
         >
-          <View style={styles.upgradeIconContainer}>
+          <View style={[styles.upgradeIconContainer, { backgroundColor: '#FFF3E0' }]}>
             <Icon name="chat" size={32} color="#FF9800" />
           </View>
           <View style={styles.upgradeContent}>
@@ -224,8 +283,9 @@ export default function AnalysisScreen() {
             <Text style={styles.upgradeDescription}>
               • Live chat with certified expert{' \n'}
               • Personalized advice{' \n'}
-              • Follow-up support{' \n'}
-              • Regional solutions
+              • Follow-up support (24 hours){' \n'}
+              • Regional solutions{' \n'}
+              • AI assistant available 24/7
             </Text>
             <View style={styles.priceTag}>
               <Text style={styles.priceText}>₹199</Text>
@@ -290,6 +350,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     marginBottom: 30,
+  },
+  upgradeButtonsContainer: {
+    width: '100%',
+    gap: 12,
+  },
+  upgradeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 25,
+    gap: 10,
+  },
+  reportButton: {
+    backgroundColor: '#2196F3',
+  },
+  consultButton: {
+    backgroundColor: '#FF9800',
+  },
+  upgradeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   retryButton: {
     backgroundColor: '#4CAF50',
@@ -397,7 +481,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 12,
-    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -431,6 +514,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 16,
     gap: 12,
+    marginBottom: 20,
   },
   secondaryButton: {
     flex: 1,
