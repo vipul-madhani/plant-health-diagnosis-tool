@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .success-icon { font-size: 60px; margin-bottom: 10px; }
+        .content { background: #f9f9f9; padding: 30px; }
+        .receipt-box { background: white; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .receipt-row.total { font-weight: bold; font-size: 18px; border-bottom: none; color: #4CAF50; }
+        .button { display: inline-block; padding: 12px 30px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="success-icon">✓</div>
+            <h1>Payment Successful!</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{userName}},</h2>
+            <p>Your payment has been successfully processed. Thank you for choosing AgriIQ!</p>
+
+            <div class="receipt-box">
+                <h3>Payment Receipt</h3>
+                <div class="receipt-row">
+                    <span>Order ID:</span>
+                    <span><strong>{{orderId}}</strong></span>
+                </div>
+                <div class="receipt-row">
+                    <span>Service:</span>
+                    <span>{{serviceType}}</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Amount:</span>
+                    <span>₹{{amount}}</span>
+                </div>
+                <div class="receipt-row">
+                    <span>GST (18%):</span>
+                    <span>₹{{gst}}</span>
+                </div>
+                <div class="receipt-row total">
+                    <span>Total Paid:</span>
+                    <span>₹{{total}}</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Date & Time:</span>
+                    <span>{{paymentDate}}</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Payment Method:</span>
+                    <span>{{paymentMethod}}</span>
+                </div>
+            </div>
+
+            <p style="text-align: center;">
+                <a href="{{accessLink}}" class="button">Access Your {{serviceType}}</a>
+            </p>
+
+            <p><strong>What's Next?</strong></p>
+            <ul>
+                {{#if isReport}}
+                <li>Download your detailed PDF report from the app</li>
+                <li>Review treatment recommendations</li>
+                <li>Save the report for future reference</li>
+                {{/if}}
+                {{#if isConsultation}}
+                <li>Start chatting with your assigned agronomist</li>
+                <li>Share additional plant images if needed</li>
+                <li>Get personalized treatment advice</li>
+                {{/if}}
+            </ul>
+
+            <p>If you have any questions about your purchase, feel free to contact our support team.</p>
+            <p>Best regards,<br><strong>Team AgriIQ</strong></p>
+        </div>
+        <div class="footer">
+            <p>This is an automated receipt. Please save for your records.</p>
+            <p>AgriIQ | Intelligent Plant Health Solutions</p>
+            <p>&copy; 2025 AgriIQ. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

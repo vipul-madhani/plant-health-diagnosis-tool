@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agronomist Assigned</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #4CAF50; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; }
+        .agronomist-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .button { display: inline-block; padding: 12px 30px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .info-box { background: #E8F5E9; border-left: 4px solid #4CAF50; padding: 15px; margin: 15px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Agronomist Assigned!</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{farmerName}},</h2>
+            <p>Great news! A certified agronomist has been assigned to your consultation.</p>
+
+            <div class="agronomist-card">
+                <h3>Your Agronomist</h3>
+                <p><strong>Name:</strong> {{agronomistName}}</p>
+                <p><strong>Specialization:</strong> {{specialization}}</p>
+                <p><strong>Experience:</strong> {{experience}} years</p>
+                <p><strong>Location:</strong> {{location}}</p>
+            </div>
+
+            <div class="info-box">
+                <strong>📱 Next Steps:</strong>
+                <ul style="margin: 10px 0;">
+                    <li>Open the AgriIQ app</li>
+                    <li>Go to "My Consultations"</li>
+                    <li>Start chatting with your agronomist</li>
+                </ul>
+            </div>
+
+            <p style="text-align: center;">
+                <a href="{{chatLink}}" class="button">Start Consultation</a>
+            </p>
+
+            <p><strong>What to Expect:</strong></p>
+            <ul>
+                <li>Personalized treatment recommendations</li>
+                <li>24-hour follow-up support</li>
+                <li>Region-specific farming advice</li>
+                <li>Organic remedy suggestions</li>
+            </ul>
+
+            <p>Your agronomist is ready to help. Don't hesitate to ask any questions!</p>
+            <p>Best regards,<br><strong>Team AgriIQ</strong></p>
+        </div>
+        <div class="footer">
+            <p>AgriIQ | Intelligent Plant Health Solutions</p>
+            <p>&copy; 2025 AgriIQ. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
