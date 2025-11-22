@@ -37,18 +37,20 @@ const userSchema = new mongoose.Schema(
       default: 'Central',
     },
 
-    // Daily Usage Tracking (for 3 free analyses per day)
-    dailyAnalysisCount: {
+    // Lifetime Usage Tracking (3 free analyses TOTAL - no daily reset)
+    freeAnalysisCount: {
       type: Number,
       default: 0,
+      max: 3,
     },
-    lastAnalysisDate: {
-      type: Date,
-      default: null,
-    },
-    totalFreeAnalysisUsed: {
+    freeAnalysisLimit: {
       type: Number,
-      default: 0,
+      default: 3,
+    },
+    hasReachedFreeLimit: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
 
     // Agronomist-specific fields
@@ -158,41 +160,31 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Method to check daily analysis limit
+// Method to check if user can do free analysis (3 lifetime total)
 userSchema.methods.canDoFreeAnalysis = function () {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const lastAnalysis = this.lastAnalysisDate ? new Date(this.lastAnalysisDate) : null;
-  
-  if (!lastAnalysis || lastAnalysis < today) {
-    // New day - reset counter
-    return { allowed: true, remaining: 3 };
+  if (this.freeAnalysisCount >= this.freeAnalysisLimit) {
+    return { 
+      allowed: false, 
+      remaining: 0,
+      message: 'You have used all 3 free analyses. Please purchase a detailed report or consultation to continue.'
+    };
   }
 
-  if (this.dailyAnalysisCount < 3) {
-    return { allowed: true, remaining: 3 - this.dailyAnalysisCount };
-  }
-
-  return { allowed: false, remaining: 0 };
+  return { 
+    allowed: true, 
+    remaining: this.freeAnalysisLimit - this.freeAnalysisCount,
+    message: `${this.freeAnalysisLimit - this.freeAnalysisCount} free analyses remaining`
+  };
 };
 
-// Method to increment analysis count
+// Method to increment analysis count (no reset - lifetime limit)
 userSchema.methods.incrementAnalysisCount = async function () {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const lastAnalysis = this.lastAnalysisDate ? new Date(this.lastAnalysisDate) : null;
-
-  if (!lastAnalysis || lastAnalysis < today) {
-    // New day - reset counter
-    this.dailyAnalysisCount = 1;
-    this.lastAnalysisDate = new Date();
-  } else {
-    this.dailyAnalysisCount += 1;
+  this.freeAnalysisCount += 1;
+  
+  if (this.freeAnalysisCount >= this.freeAnalysisLimit) {
+    this.hasReachedFreeLimit = true;
   }
-
-  this.totalFreeAnalysisUsed += 1;
+  
   await this.save();
 };
 
