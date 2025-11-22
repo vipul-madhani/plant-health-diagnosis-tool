@@ -2,49 +2,75 @@
  * AgriIQ Mobile App - Environment Configuration
  * 
  * This file manages environment-specific configuration for development and production.
- * Update the values with your actual credentials before testing.
+ * Updated: November 23, 2025
  * 
- * IMPORTANT: Never commit real credentials to Git.
+ * CREDENTIALS INCLUDED:
+ * - Razorpay Test Keys
+ * - Firebase Android App Config
+ * - Firebase iOS App Config
  */
 
 const ENV = {
   development: {
     // Local Development API
     // Replace with your computer's LAN IP address (find with ipconfig or ifconfig)
-    API_BASE_URL: 'http://192.168.1.100:8000',
+    // Example: 'http://192.168.1.100:8000' or use localhost for emulator
+    API_BASE_URL: 'http://localhost:8000',
     
     // Razorpay Test Credentials
-    RAZORPAY_KEY_ID: 'rzp_test_your_key_here',
+    RAZORPAY_KEY_ID: 'rzp_test_Rit4Xu1MbE7FYb',
     
-    // Firebase Development Configuration
+    // Firebase Mobile App Configuration (Android + iOS)
     FIREBASE_CONFIG: {
-      apiKey: 'your_firebase_api_key_here',
-      authDomain: 'your-project.firebaseapp.com',
-      projectId: 'your_firebase_project_id',
-      storageBucket: 'your-project.appspot.com',
-      messagingSenderId: 'your_messaging_sender_id',
-      appId: 'your_firebase_app_id',
-      measurementId: 'G-XXXXXXXXXX',
+      apiKey: 'AIzaSyDdMJ-Jdalf4F5AeTEanr9yxK0NMwbf6PY',
+      authDomain: 'agriiq-f19c5.firebaseapp.com',
+      projectId: 'agriiq-f19c5',
+      storageBucket: 'agriiq-f19c5.firebasestorage.app',
+      messagingSenderId: '418032934340',
+      appId: '1:418032934340:android:a12893a6d2ed5f3ec41891', // Android App ID
+      iosAppId: '1:418032934340:ios:40e6d0a1acfdb4c6c41891', // iOS App ID
+      measurementId: 'G-H4LQCWNT0M',
     },
+    
+    // Payment Amounts (in INR)
+    DETAILED_REPORT_AMOUNT: 99,
+    CONSULTATION_AMOUNT: 199,
+    
+    // Usage Limits
+    FREE_ANALYSIS_LIMIT: 3,
+    
+    // Socket.io endpoint
+    SOCKET_URL: 'http://localhost:5000',
   },
   
   production: {
     // Production API
-    API_BASE_URL: 'https://api.agriiq.com',
+    API_BASE_URL: 'https://api.agriiq.in',
     
-    // Razorpay Live Credentials
+    // Razorpay Live Credentials (Replace with live keys when deploying)
     RAZORPAY_KEY_ID: 'rzp_live_your_key_here',
     
-    // Firebase Production Configuration
+    // Firebase Production Configuration (Same as dev for now)
     FIREBASE_CONFIG: {
-      apiKey: 'your_firebase_api_key_here',
-      authDomain: 'your-project.firebaseapp.com',
-      projectId: 'your_firebase_project_id',
-      storageBucket: 'your-project.appspot.com',
-      messagingSenderId: 'your_messaging_sender_id',
-      appId: 'your_firebase_app_id',
-      measurementId: 'G-XXXXXXXXXX',
+      apiKey: 'AIzaSyDdMJ-Jdalf4F5AeTEanr9yxK0NMwbf6PY',
+      authDomain: 'agriiq-f19c5.firebaseapp.com',
+      projectId: 'agriiq-f19c5',
+      storageBucket: 'agriiq-f19c5.firebasestorage.app',
+      messagingSenderId: '418032934340',
+      appId: '1:418032934340:android:a12893a6d2ed5f3ec41891',
+      iosAppId: '1:418032934340:ios:40e6d0a1acfdb4c6c41891',
+      measurementId: 'G-H4LQCWNT0M',
     },
+    
+    // Payment Amounts (in INR)
+    DETAILED_REPORT_AMOUNT: 99,
+    CONSULTATION_AMOUNT: 199,
+    
+    // Usage Limits
+    FREE_ANALYSIS_LIMIT: 3,
+    
+    // Socket.io endpoint
+    SOCKET_URL: 'https://api.agriiq.in',
   },
 };
 
@@ -63,19 +89,25 @@ const getEnvVars = () => {
 export default getEnvVars;
 
 /**
- * SETUP INSTRUCTIONS:
+ * SETUP INSTRUCTIONS FOR LOCAL TESTING:
  * 
- * 1. Find your local IP address:
- *    - Mac/Linux: Run 'ifconfig | grep inet' in terminal
- *    - Windows: Run 'ipconfig' in command prompt
- *    - Look for 192.168.x.x or 10.0.x.x address
+ * 1. If testing on physical device (not emulator):
+ *    - Find your local IP address:
+ *      * Mac/Linux: Run 'ifconfig | grep inet' in terminal
+ *      * Windows: Run 'ipconfig' in command prompt
+ *      * Look for 192.168.x.x or 10.0.x.x address
+ *    - Update API_BASE_URL: 'http://YOUR_IP_HERE:8000'
  * 
- * 2. Update API_BASE_URL in development with your IP:
- *    API_BASE_URL: 'http://YOUR_IP_HERE:8000'
+ * 2. For Android/iOS emulator:
+ *    - Keep API_BASE_URL as 'http://localhost:8000'
+ *    - Emulators can access host machine via localhost
  * 
- * 3. Add your Razorpay keys from: https://dashboard.razorpay.com/app/keys
+ * 3. Firebase Setup:
+ *    ✅ Android: Already configured with google-services.json
+ *    ✅ iOS: Already configured with GoogleService-Info.plist
  * 
- * 4. Add Firebase config from: Firebase Console > Project Settings > General
- * 
- * 5. For production, update with live credentials
+ * 4. For Production Deployment:
+ *    - Update API_BASE_URL to your live domain
+ *    - Replace Razorpay test key with live key
+ *    - Ensure Firebase config matches production environment
  */
